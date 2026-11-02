@@ -1,0 +1,12 @@
+"""Global system constants for ATLAS."""
+
+APP_NAME = "ATLAS"
+
+ENV_LOCAL = "local"
+ENV_TEST = "test"
+ENV_STAGING = "staging"
+ENV_PRODUCTION = "production"
+
+SUPPORTED_ENVIRONMENTS = (ENV_LOCAL, ENV_TEST, ENV_STAGING, ENV_PRODUCTION)
+
+DEFAULT_TIMEOUT_SECONDS = 30.0

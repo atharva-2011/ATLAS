@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlas-retrieval-service"
+version = "0.1.0"
+description = "ATLAS Retrieval Service"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic-settings>=2.5.0",
+    "atlas-contracts",
+    "atlas-observability",
+    "atlas-common",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

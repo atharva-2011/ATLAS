@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlas-common"
+version = "0.1.0"
+description = "ATLAS Shared Common Primitives and Constants"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
