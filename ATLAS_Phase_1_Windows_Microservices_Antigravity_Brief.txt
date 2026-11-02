@@ -1,0 +1,696 @@
+ATLAS MULTI-AGENT RESEARCH INTELLIGENCE SYSTEM PHASE 1: WINDOWS PROJECT
+BOOTSTRAP AND MICROSERVICES FOUNDATION Implementation brief for
+Antigravity Version: 1.0 Target OS: Windows 10/11 Shell: Windows
+PowerShell 5.1 Python: 3.12.6 Repository style: Python monorepo
+containing independently deployable microservices
+
+====================================================================== 1.
+PURPOSE AND EXPECTED OUTCOME
+======================================================================
+
+Build the engineering foundation for ATLAS, a production-oriented,
+multi-agent research and retrieval-augmented generation (RAG) platform.
+
+ATLAS MUST use a microservices architecture. Do not create one large
+FastAPI application that contains all business capabilities.
+
+For Phase 1, create a clean monorepo, independent service scaffolds,
+shared contracts and utilities, centralized configuration conventions,
+structured logging, health endpoints, tests, and local development
+instructions.
+
+Phase 1 is infrastructure and application scaffolding only. Do not
+implement actual RAG, embeddings, vector search, LLM agents, document
+ingestion logic, research workflows, or production database integration
+in this phase.
+
+The result must run on Windows using PowerShell 5.1 and Python 3.12.6.
+Docker is not currently installed on the developer’s machine. Do not
+make Docker a blocker for Phase 1. Services must be runnable locally
+using separate Python processes and virtual environments. Add Docker
+readiness files only if they can be added without requiring Docker to
+run the project.
+
+======================================================================
+2. DEVELOPER ENVIRONMENT CONTEXT
+======================================================================
+
+Known environment:
+
+-   Windows PowerShell 5.1
+-   Python 3.12.6 at: C:.exe
+-   Python 3.10 is also installed, but use Python 3.12.6 for ATLAS.
+-   Git 2.45.2.windows.1
+-   Docker command is not currently recognized.
+-   Docker Compose is not currently available.
+-   Project workspace should be: %USERPROFILE%
+
+Before making changes, inspect the current directory and repository. The
+user may already have created the project directory, initialized Git, or
+created a virtual environment. Do not overwrite or delete existing work.
+
+Run these checks from PowerShell:
+
+    Get-Location
+    Get-ChildItem -Force
+    python --version
+    py -0p
+    git --version
+    if (Test-Path .git) { git status --short --branch }
+    if (Test-Path .venv) { "Existing .venv found" }
+
+If the project directory does not exist:
+
+    New-Item -ItemType Directory -Force "$HOME\Projects\ATLAS"
+    Set-Location "$HOME\Projects\ATLAS"
+
+If it exists, enter it:
+
+    Set-Location "$HOME\Projects\ATLAS"
+
+Initialize Git only if .git does not already exist:
+
+    git init
+
+Create a root virtual environment only if one does not already exist:
+
+    py -3.12 -m venv .venv
+
+Activate it:
+
+    .\.venv\Scripts\Activate.ps1
+
+If activation is blocked by the current PowerShell execution policy, use
+a process-scoped temporary policy, not a machine-wide policy:
+
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    .\.venv\Scripts\Activate.ps1
+
+Verify:
+
+    python --version
+    where.exe python
+
+Expected Python executable should resolve to:
+
+    <ATLAS_ROOT>\.venv\Scripts\python.exe
+
+Do not run project commands from C:.
+
+======================================================================
+3. ARCHITECTURAL DECISIONS
+======================================================================
+
+Architecture: - Microservices. - Monorepo for source control and
+coordinated development. - Each service owns its API, application logic,
+domain logic, infrastructure adapters, configuration, tests, and runtime
+entrypoint. - Services must be independently startable as separate
+processes. - Services communicate through explicit versioned
+contracts. - Use synchronous HTTP for simple request/response
+communication in the initial foundation. - Asynchronous messaging will
+be introduced in a later infrastructure phase when the actual workflows
+and event boundaries are defined. - Do not introduce service-to-service
+calls unnecessarily in Phase 1.
+
+Initial service boundaries:
+
+1.  api_gateway External API entry point. Future responsibility:
+    routing, request validation, authentication integration, rate
+    limiting and API versioning. In Phase 1 it only needs a minimal
+    FastAPI application and health route.
+
+2.  research_orchestrator Future responsibility: create and coordinate
+    research jobs, manage workflow state, and coordinate the agent
+    runtime. In Phase 1 it only needs a minimal service scaffold and
+    health route.
+
+3.  ingestion_service Future responsibility: accept documents and URLs,
+    extract text, normalize content, chunk documents, and initiate
+    indexing. In Phase 1 it only needs a minimal service scaffold and
+    health route.
+
+4.  retrieval_service Future responsibility: keyword, vector and hybrid
+    retrieval, filtering, reranking and retrieval result normalization.
+    In Phase 1 it only needs a minimal service scaffold and health
+    route.
+
+5.  agent_runtime Future responsibility: execute logical agents such as
+    Researcher, Analyst, Verifier and Synthesizer. These are logical
+    agents within this service initially, NOT separate microservices in
+    Phase 1. In Phase 1 it only needs a minimal service scaffold and
+    health route.
+
+6.  evaluation_service Future responsibility: evaluate retrieval
+    quality, answer quality, citation correctness, groundedness and
+    regression performance. In Phase 1 it only needs a minimal service
+    scaffold and health route.
+
+Shared packages:
+
+-   shared/contracts: versioned request/response schemas and event
+    contracts.
+-   shared/common: small, stable cross-service primitives only.
+-   shared/observability: correlation ID and logging conventions.
+-   shared/security: reserved for shared security interfaces and
+    helpers. Do not build a custom authentication system in Phase 1.
+
+Infrastructure folder:
+
+-   infrastructure/docker: future Dockerfiles and container-related
+    assets.
+-   infrastructure/scripts: developer and maintenance scripts.
+-   Do not require Docker Compose for the local Phase 1 run.
+
+IMPORTANT: Do not create a distributed monolith. Do not put all business
+logic in shared/common. Shared packages must contain only genuinely
+reusable cross-service code. Each service must own its business logic
+and data access logic. Avoid shared database models across services.
+
+======================================================================
+4. TARGET REPOSITORY STRUCTURE
+======================================================================
+
+Create this structure:
+
+ATLAS/ | |– services/ | |– api_gateway/ | | |– src/ | | | |–
+api_gateway/ | | | |– api/ | | | |– core/ | | | |– main.py | | |– tests/
+| | |– pyproject.toml | | |– .env.example | | | |–
+research_orchestrator/ | | |– src/research_orchestrator/ | | | |– api/ |
+| | |– core/ | | | |– main.py | | |– tests/ | | |– pyproject.toml | | |–
+.env.example | | | |– ingestion_service/ | | |– src/ingestion_service/ |
+| | |– api/ | | | |– core/ | | | |– main.py | | |– tests/ | | |–
+pyproject.toml | | |– .env.example | | | |– retrieval_service/ | | |–
+src/retrieval_service/ | | | |– api/ | | | |– core/ | | | |– main.py | |
+|– tests/ | | |– pyproject.toml | | |– .env.example | | | |–
+agent_runtime/ | | |– src/agent_runtime/ | | | |– api/ | | | |– core/ |
+| | |– main.py | | |– tests/ | | |– pyproject.toml | | |– .env.example |
+| | |– evaluation_service/ | |– src/evaluation_service/ | | |– api/ | |
+|– core/ | | |– main.py | |– tests/ | |– pyproject.toml | |–
+.env.example | |– shared/ | |– contracts/ | | |– src/atlas_contracts/ |
+| |– tests/ | | |– pyproject.toml | | | |– common/ | | |–
+src/atlas_common/ | | |– tests/ | | |– pyproject.toml | | | |–
+observability/ | | |– src/atlas_observability/ | | |– tests/ | | |–
+pyproject.toml | | | |– security/ | |– src/atlas_security/ | |– tests/ |
+|– pyproject.toml | |– infrastructure/ | |– docker/ | |– scripts/ | |–
+tests/ | |– integration/ | |– end_to_end/ | |– docs/ |– .env.example |–
+.gitignore |– .python-version |– README.md |– pyproject.toml |–
+requirements-dev.txt (only if justified; prefer pyproject tooling) └–
+Makefile or equivalent PowerShell scripts (optional; do not assume make
+is installed on Windows)
+
+Each service must be a separately installable Python package. Use a
+src-layout. Service package names must be valid Python identifiers. Do
+not use hyphens in Python package names.
+
+A service’s pyproject.toml should declare its own runtime dependencies.
+Do not install every future dependency into every service. Shared local
+packages should be installed as editable dependencies only where needed.
+
+======================================================================
+5. DEPENDENCY AND TOOLING STRATEGY
+======================================================================
+
+Use Python 3.12.
+
+Recommended Phase 1 runtime dependencies for each FastAPI service:
+
+-   fastapi
+-   uvicorn[standard]
+-   pydantic-settings
+
+Use compatible stable versions at implementation time. Pin dependencies
+using sensible version constraints and generate lock/fully resolved
+dependency files only if the chosen tool supports it cleanly.
+
+Development tooling:
+
+-   pytest
+-   httpx
+-   ruff
+-   pytest-cov (optional)
+
+Do not add these yet unless needed by actual Phase 1 code:
+
+-   LangChain
+-   LangGraph
+-   LlamaIndex
+-   sentence-transformers
+-   torch
+-   transformers
+-   chromadb
+-   qdrant-client
+-   pgvector
+-   sqlalchemy
+-   redis
+-   celery
+-   kafka clients
+-   cloud provider SDKs
+-   model provider SDKs
+
+Those belong to later phases. Keep installation small.
+
+Use one root developer virtual environment initially for convenience.
+Each service remains independently installable and independently
+deployable. Do not claim separate environments are mandatory for
+microservice independence. If dependency isolation becomes necessary,
+create per-service environments later.
+
+The root pyproject.toml should configure Ruff and pytest for the
+monorepo. Service pyproject.toml files should define each service
+package and its own runtime dependencies.
+
+======================================================================
+6. CONFIGURATION REQUIREMENTS
+======================================================================
+
+Each service must own its configuration.
+
+Use Pydantic Settings. Configuration must come from environment
+variables and an optional local .env file. Do not hardcode hostnames,
+credentials, API keys, database URLs or machine-specific paths.
+
+Each service’s configuration should include, as appropriate:
+
+-   SERVICE_NAME
+-   SERVICE_VERSION
+-   ENVIRONMENT (local, test, staging, production)
+-   HOST
+-   PORT
+-   LOG_LEVEL
+-   LOG_FORMAT (json or console)
+-   API_PREFIX
+
+Provide safe defaults for local development.
+
+Never commit real .env files. Commit .env.example files with placeholder
+values only.
+
+Do not create one global settings object that imports every service’s
+settings. A service must load only its own settings.
+
+Validate settings at application startup. Invalid configuration should
+produce a clear error without exposing secrets.
+
+======================================================================
+7. LOGGING AND CORRELATION ID
+======================================================================
+
+Implement a small reusable observability package.
+
+Requirements:
+
+-   Use Python logging, not print statements.
+-   Support readable console logs for local Windows development.
+-   Support JSON structured logs for machine processing.
+-   Include timestamp, severity, service name, logger name and message.
+-   Include correlation_id when available.
+-   Never log secrets, authorization headers, API keys or full sensitive
+    document content.
+-   Provide a correlation ID middleware for each FastAPI service.
+-   If an incoming X-Correlation-ID header exists and is valid, preserve
+    it.
+-   Otherwise generate a UUID.
+-   Return X-Correlation-ID in the response.
+-   Keep middleware implementation small and tested.
+-   Do not add OpenTelemetry yet unless the phase explicitly requires
+    it.
+
+The shared observability package should expose a documented setup
+function and correlation context utilities. Avoid circular imports.
+
+======================================================================
+8. SERVICE APPLICATION REQUIREMENTS
+======================================================================
+
+Each of the six services must have:
+
+-   A package entrypoint.
+-   A FastAPI app factory or a clearly testable app construction
+    function.
+-   A /health/live endpoint.
+-   A /health/ready endpoint.
+-   A service identity response including service name and version.
+-   Configuration validation.
+-   Structured logging.
+-   Correlation ID middleware.
+-   Unit tests for the health routes and configuration behavior.
+
+Liveness: - Indicates that the process and application event loop are
+alive. - Must not fail because a future database or vector store is
+unavailable.
+
+Readiness: - In Phase 1, indicates that the service has completed
+startup and can accept requests. - Do not pretend external dependencies
+are healthy when they are not configured. - As dependencies are
+introduced in later phases, readiness checks can include them with
+explicit timeout and status reporting.
+
+Health response should be consistent across services. Example shape:
+
+    {
+      "status": "ok",
+      "service": "ingestion-service",
+      "version": "0.1.0"
+    }
+
+For readiness, a response may include:
+
+    {
+      "status": "ready",
+      "service": "ingestion-service",
+      "version": "0.1.0",
+      "checks": {}
+    }
+
+Use shared response contracts only if that does not create unnecessary
+coupling. Keep the API response versioned and documented.
+
+======================================================================
+9. API GATEWAY SCOPE
+======================================================================
+
+The API Gateway is the only externally exposed entry point in the
+intended architecture.
+
+For Phase 1: - Create its FastAPI application. - Add its own health
+routes. - Add a root metadata route if useful. - Do not implement
+authentication yet. - Do not implement rate limiting yet. - Do not proxy
+to all services yet. - Do not build a custom service registry. -
+Document that later service routing will be configured explicitly.
+
+Each internal service should listen on its own local port during
+development. Bind to 127.0.0.1 by default for local development unless
+there is a specific reason to expose it on the network.
+
+Suggested local ports:
+
+-   API Gateway: 8000
+-   Research Orchestrator: 8001
+-   Ingestion Service: 8002
+-   Retrieval Service: 8003
+-   Agent Runtime: 8004
+-   Evaluation Service: 8005
+
+Make ports configurable using environment variables. Avoid port values
+being duplicated in unrelated code. Document the local port map.
+
+======================================================================
+10. SHARED CONTRACTS
+======================================================================
+
+Create the shared contracts package as a place for stable, versioned
+service boundary schemas.
+
+For Phase 1, add only minimal common types, such as:
+
+-   HealthResponse
+-   ReadinessResponse
+-   ErrorResponse
+-   Correlation metadata, if appropriate
+
+Use Pydantic models with explicit fields and sensible validation.
+
+Do not put domain entities for every future capability into shared
+contracts prematurely. Contracts should evolve when real service
+interactions are designed.
+
+Document compatibility expectations: - Additive optional fields are
+generally backward-compatible. - Removing or changing field meaning
+requires a versioned change. - Do not share internal ORM/database models
+between services.
+
+======================================================================
+11. LOCAL WINDOWS DEVELOPMENT WORKFLOW
+======================================================================
+
+All commands must work in Windows PowerShell 5.1.
+
+Create scripts under infrastructure/scripts or docs with commands to:
+
+1.  Create/activate the root virtual environment.
+2.  Install development tooling.
+3.  Install each service in editable mode.
+4.  Start one service.
+5.  Run tests.
+6.  Run lint and formatting checks.
+
+Example commands after scaffolding:
+
+    Set-Location "$HOME\Projects\ATLAS"
+    .\.venv\Scripts\Activate.ps1
+
+Install root development tools:
+
+    python -m pip install --upgrade pip
+    python -m pip install pytest httpx ruff
+
+Install services in editable mode, where pyproject.toml files exist:
+
+    python -m pip install -e .\services\api_gateway
+    python -m pip install -e .\services\research_orchestrator
+    python -m pip install -e .\services\ingestion_service
+    python -m pip install -e .\services\retrieval_service
+    python -m pip install -e .\services\agent_runtime
+    python -m pip install -e .\services\evaluation_service
+
+Install shared packages in editable mode if service dependencies require
+them:
+
+    python -m pip install -e .\shared\contracts
+    python -m pip install -e .\shared\common
+    python -m pip install -e .\shared\observability
+
+Start an individual service (example):
+
+    python -m uvicorn api_gateway.main:app --host 127.0.0.1 --port 8000 --reload
+
+The exact import path may vary according to the final package layout.
+Ensure the command in README matches the implemented entrypoint.
+
+Run tests:
+
+    python -m pytest
+
+Run lint:
+
+    python -m ruff check .
+
+Run formatting check:
+
+    python -m ruff format --check .
+
+Provide a PowerShell script to start all six services in separate
+PowerShell processes or windows. The script must: - Use the active root
+virtual environment. - Start each service on its configured port. - Keep
+logs distinguishable by service. - Avoid silently swallowing startup
+errors. - Explain how to stop the processes. - Not require Docker.
+
+Do not use Bash syntax in Windows instructions.
+
+======================================================================
+12. TESTING REQUIREMENTS
+======================================================================
+
+Unit tests: - Each service app can be created. - Each service health
+endpoint returns the expected response. - Each service readiness
+endpoint returns the expected response. - Correlation ID is generated
+when absent. - Correlation ID is propagated when valid. - Configuration
+defaults are correct. - Invalid configuration fails clearly.
+
+Integration tests: - Test that all service apps can be imported. - Test
+health endpoints using FastAPI TestClient or httpx. - Verify shared
+contracts serialize consistently. - Verify no service import depends on
+another service’s private modules.
+
+Tests must not require internet access, API keys, external databases,
+vector databases or Docker.
+
+======================================================================
+13. SECURITY AND QUALITY RULES
+======================================================================
+
+-   Never commit .env files or secrets.
+-   Add .env, .venv, pycache, .pytest_cache, .ruff_cache, logs, coverage
+    outputs and local artifacts to .gitignore.
+-   Do not hardcode user-specific Windows paths in application code.
+-   Use pathlib for filesystem paths.
+-   Use type hints.
+-   Keep functions and classes focused.
+-   Avoid giant files and giant configuration modules.
+-   Avoid wildcard imports.
+-   Avoid circular imports.
+-   Avoid global mutable state.
+-   Do not use print for application logging.
+-   Do not suppress exceptions silently.
+-   Do not catch Exception unless there is a clear boundary and the
+    exception is logged and translated appropriately.
+-   Do not expose stack traces or internal errors in API responses.
+-   Keep secrets out of logs and test snapshots.
+-   Add docstrings to public interfaces where useful.
+-   Prefer explicit dependency injection over hidden global
+    dependencies.
+-   Do not create abstractions without a real Phase 1 use case.
+
+======================================================================
+14. DOCKER DECISION
+======================================================================
+
+Docker is not installed at the start of this project.
+
+For Phase 1: - Do not block development on Docker Desktop
+installation. - Do not make the test suite depend on Docker. - Make all
+six services runnable as independent local Python processes. - Create a
+Docker readiness note in the documentation. - Do not invent a Docker
+Compose configuration that has not been tested. - Dockerfiles and
+Compose orchestration can be implemented in a later infrastructure step
+once the service ports, health checks and runtime commands are stable.
+
+When Docker is introduced: - Use Docker Desktop with WSL2 backend if
+compatible with the machine. - Consider memory limits because the
+developer machine has 8 GB RAM. - Start with a small number of
+containers and monitor resource usage.
+
+======================================================================
+15. IMPLEMENTATION ORDER
+======================================================================
+
+Implement in this exact order. After each step, run its relevant tests.
+
+STEP 1: Inspect existing workspace - Confirm current directory. -
+Inspect existing files. - Check Git state. - Check virtual
+environment. - Do not overwrite existing user work.
+
+STEP 2: Initialize repository conventions - Create .gitignore. - Create
+.python-version with 3.12. - Create root pyproject.toml. - Create
+README.md. - Create docs/ and infrastructure/scripts/.
+
+STEP 3: Create shared packages - contracts - common - observability -
+security Keep each package minimal.
+
+STEP 4: Create one service template - Implement api_gateway first. - Add
+settings, app factory, health routes, logging and tests. - Verify it
+works before replicating the pattern.
+
+STEP 5: Scaffold remaining services - research_orchestrator -
+ingestion_service - retrieval_service - agent_runtime -
+evaluation_service
+
+Each service must have independent settings and app creation. Do not
+copy/paste large amounts of duplicated code. Reuse only stable, small
+shared utilities.
+
+STEP 6: Implement correlation ID and logging - Add middleware. - Add
+console and JSON formats. - Add tests.
+
+STEP 7: Implement shared health contracts - Use consistent response
+shapes. - Add tests for serialization and validation.
+
+STEP 8: Add local development scripts - Install services. - Start one
+service. - Start all services. - Stop services. - Run tests and lint.
+
+STEP 9: Verify all six services - Start each service independently. -
+Call each /health/live endpoint. - Call each /health/ready endpoint. -
+Confirm unique service names and versions. - Confirm correlation ID
+behavior. - Confirm all tests pass.
+
+STEP 10: Documentation and handoff - Update README with setup
+instructions. - Document directory responsibilities. - Document ports
+and service commands. - Document known limitations and deferred work. -
+Provide a concise Phase 1 completion report.
+
+======================================================================
+16. PHASE 1 ACCEPTANCE CRITERIA
+======================================================================
+
+Phase 1 is complete only when all of the following are true:
+
+[ ] Repository exists at the expected workspace location. [ ] Git is
+initialized and working tree status is understood. [ ] Python 3.12
+virtual environment works on Windows. [ ] Monorepo structure is present.
+[ ] Six independent service packages exist. [ ] Each service has its own
+pyproject.toml and .env.example. [ ] Shared contracts package exists. [
+] Shared observability package exists. [ ] Configuration uses
+environment variables and Pydantic Settings. [ ] No secrets are
+committed. [ ] Each service exposes /health/live. [ ] Each service
+exposes /health/ready. [ ] Correlation ID middleware works. [ ]
+Structured console logging works. [ ] JSON logging mode works. [ ] Every
+service can start independently. [ ] All six services can run
+simultaneously on documented ports. [ ] Unit tests pass. [ ] Integration
+tests pass. [ ] Ruff checks pass. [ ] README setup instructions work in
+PowerShell 5.1. [ ] No Docker dependency is required for Phase 1. [ ] No
+actual RAG or LLM functionality has been prematurely added.
+
+Provide command output or test summaries as evidence. Do not mark a
+criterion complete merely because a file was created.
+
+======================================================================
+17. EXPLICITLY OUT OF SCOPE FOR PHASE 1
+======================================================================
+
+Do not implement these in Phase 1:
+
+-   LLM provider integrations
+-   Agent prompts or agent reasoning
+-   LangGraph workflows
+-   Research planning
+-   Web search integration
+-   Document upload and parsing
+-   OCR
+-   Chunking and embedding
+-   Vector database integration
+-   Hybrid retrieval
+-   Reranking
+-   Citation generation
+-   Answer synthesis
+-   PostgreSQL persistence
+-   Redis or message broker
+-   Authentication and authorization implementation
+-   Rate limiting
+-   Distributed tracing platform
+-   Kubernetes
+-   Cloud deployment
+-   CI/CD pipelines
+-   Production secrets manager
+
+These capabilities will be designed and implemented in later phases. Do
+not install speculative dependencies for them now.
+
+======================================================================
+18. INSTRUCTIONS TO ANTIGRAVITY
+======================================================================
+
+You are acting as a senior Python software architect and implementation
+engineer.
+
+Follow the architecture and constraints in this document.
+
+Before editing: 1. Inspect the existing repository and current Git
+status. 2. Identify existing files and virtual environments. 3.
+Summarize the current state. 4. Present a concise implementation
+sequence. 5. Do not delete, rename or overwrite existing user files
+without explaining why and obtaining approval.
+
+During implementation: 1. Work in small, verifiable steps. 2. Implement
+API Gateway first as the reference service. 3. Run tests after each
+meaningful change. 4. Use Windows PowerShell 5.1-compatible commands. 5.
+Do not assume Docker is installed. 6. Do not add future-phase
+functionality. 7. Do not invent successful test results. 8. Keep code
+modular, typed, maintainable and documented. 9. Use configuration rather
+than hardcoded machine-specific values. 10. Keep service boundaries
+explicit. 11. Avoid unnecessary abstraction and duplicated code. 12. If
+a decision materially changes the architecture, explain the trade-off
+before making that change.
+
+At the end: - Show the final directory tree. - List the commands needed
+to activate the environment, install packages, run tests, lint and start
+each service. - Report actual test results. - List incomplete acceptance
+criteria. - List blockers and decisions that need the user’s input. - Do
+not start Phase 2 automatically.
+
+The user wants to build and understand the system phase by phase. Do not
+rush ahead. Complete Phase 1, verify it, and wait for approval before
+starting Phase 2.
+
+======================================================================
+END OF PHASE 1 IMPLEMENTATION BRIEF
+======================================================================
