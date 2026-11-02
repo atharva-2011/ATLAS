@@ -23,6 +23,21 @@ class Settings(BaseSettings):
     log_format: str = "console"
     api_prefix: str = "/api/v1"
 
+    # LLM Provider Configuration
+    default_provider: str = "mock"
+    default_model: str = "atlas-mock-v1"
+    fallback_provider: str = "mock"
+    fallback_model: str = "atlas-mock-fallback"
+    request_timeout_seconds: float = 30.0
+    max_retries: int = 2
+    temperature: float = 0.0
+
+    # API Keys & Endpoints (Optional/Secrets)
+    openai_api_key: str | None = None
+    openai_base_url: str | None = None
+    anthropic_api_key: str | None = None
+    gemini_api_key: str | None = None
+
 
 @lru_cache
 def get_settings() -> Settings:
