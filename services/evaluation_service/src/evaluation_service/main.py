@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from atlas_observability import CorrelationIdMiddleware, setup_logging
 from fastapi import FastAPI
 
+from evaluation_service.api.eval_routes import router as eval_router
 from evaluation_service.api.health import router as health_router
 from evaluation_service.core.config import Settings, get_settings
 
@@ -49,6 +50,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Routes
     app.include_router(health_router)
+    app.include_router(eval_router)
 
     @app.get("/", tags=["Root"])
     async def root_identity() -> dict[str, str]:

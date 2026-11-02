@@ -44,6 +44,14 @@ from atlas_contracts.domain import (
     TaskStatus,
     VerificationStatus,
 )
+from atlas_contracts.evaluation import (
+    CitationVerificationRequest,
+    CitationVerificationResult,
+    ClaimSupportStatus,
+    ClaimVerificationRecord,
+    ClaimVerificationRequest,
+    NormalizedClaim,
+)
 from atlas_contracts.models import (
     ErrorResponse,
     HealthResponse,
@@ -69,6 +77,11 @@ __all__ = [
     "AgentResult",
     "ChunkIndexRequest",
     "ChunkIndexResult",
+    "CitationVerificationRequest",
+    "CitationVerificationResult",
+    "ClaimSupportStatus",
+    "ClaimVerificationRecord",
+    "ClaimVerificationRequest",
     "ClaimVerificationVerdict",
     "CriticOutput",
     "DocumentChunk",
@@ -89,6 +102,7 @@ __all__ = [
     "LLMMessageRole",
     "LLMResponse",
     "LLMUsage",
+    "NormalizedClaim",
     "PlannedSubtask",
     "PlannerOutput",
     "ReadinessResponse",
