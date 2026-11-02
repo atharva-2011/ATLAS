@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_format: str = "console"
     api_prefix: str = "/api/v1"
+    research_orchestrator_url: str = "http://127.0.0.1:8001"
+    ingestion_service_url: str = "http://127.0.0.1:8002"
+    retrieval_service_url: str = "http://127.0.0.1:8003"
+    agent_runtime_url: str = "http://127.0.0.1:8004"
+    evaluation_service_url: str = "http://127.0.0.1:8005"
 
 
 @lru_cache

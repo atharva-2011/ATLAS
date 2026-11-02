@@ -19,6 +19,7 @@ dependencies = [
     "atlas-contracts",
     "atlas-observability",
     "atlas-common",
+    "atlas-security",
 ]
 
 [tool.setuptools.packages.find]

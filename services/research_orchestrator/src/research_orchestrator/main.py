@@ -7,6 +7,7 @@ from atlas_observability import CorrelationIdMiddleware, setup_logging
 from fastapi import FastAPI
 
 from research_orchestrator.api.health import router as health_router
+from research_orchestrator.api.job_routes import router as job_router
 from research_orchestrator.api.workflow_routes import router as workflow_router
 from research_orchestrator.core.config import Settings, get_settings
 
@@ -50,6 +51,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Routes
     app.include_router(health_router)
+    app.include_router(job_router)
     app.include_router(workflow_router)
 
     @app.get("/", tags=["Root"])
