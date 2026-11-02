@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from atlas_observability import CorrelationIdMiddleware, setup_logging
 from fastapi import FastAPI
 
+from ingestion_service.api.documents import router as documents_router
 from ingestion_service.api.health import router as health_router
 from ingestion_service.core.config import Settings, get_settings
 
@@ -49,8 +50,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Routes
     app.include_router(health_router)
-    from ingestion_service.api.documents import router as documents_router
-
     app.include_router(documents_router)
 
     @app.get("/", tags=["Root"])
