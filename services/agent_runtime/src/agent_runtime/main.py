@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from atlas_observability import CorrelationIdMiddleware, setup_logging
 from fastapi import FastAPI
 
+from agent_runtime.api.agent_routes import router as agent_router
 from agent_runtime.api.health import router as health_router
 from agent_runtime.api.llm_routes import router as llm_router
 from agent_runtime.core.config import Settings, get_settings
@@ -51,6 +52,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Routes
     app.include_router(health_router)
     app.include_router(llm_router)
+    app.include_router(agent_router)
 
     @app.get("/", tags=["Root"])
     async def root_identity() -> dict[str, str]:

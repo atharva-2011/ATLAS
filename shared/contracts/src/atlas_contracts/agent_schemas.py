@@ -202,3 +202,34 @@ class SynthesizerOutput(BaseModel):
     limitations: list[str] = Field(default_factory=list)
     full_markdown: str
     total_citations: int = 0
+
+
+# ============================================================================
+# 6. Common Agent Execution Contracts (Phase 7)
+# ============================================================================
+
+
+class AgentInput(BaseModel):
+    """Normalized input payload dispatched to any specialized research agent."""
+
+    task_id: str
+    objective: str
+    agent_type: str
+    tenant_id: str = "default"
+    document_ids: list[UUID] = Field(default_factory=list)
+    search_queries: list[str] = Field(default_factory=list)
+    context_data: dict[str, Any] = Field(default_factory=dict)
+    prompt_version: str = "1.0.0"
+
+
+class AgentResult(BaseModel):
+    """Normalized result returned by any specialized agent execution."""
+
+    task_id: str
+    agent_type: str
+    status: str = "completed"  # completed | failed | partial
+    output: Any = None
+    evidence_count: int = 0
+    usage: LLMUsage = Field(default_factory=LLMUsage)
+    execution_time_ms: float = 0.0
+    error_message: str | None = None

@@ -1,6 +1,8 @@
 """ATLAS Shared Contracts."""
 
 from atlas_contracts.agent_schemas import (
+    AgentInput,
+    AgentResult,
     ClaimVerificationVerdict,
     CriticOutput,
     ExtractedEvidenceItem,
@@ -63,6 +65,8 @@ from atlas_contracts.retrieval import (
 __all__ = [
     "AgentExecutionCreate",
     "AgentExecutionRead",
+    "AgentInput",
+    "AgentResult",
     "ChunkIndexRequest",
     "ChunkIndexResult",
     "ClaimVerificationVerdict",
