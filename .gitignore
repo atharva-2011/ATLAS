@@ -60,3 +60,4 @@ Desktop.ini
 data/
 storage/
 tmp/
+.atlas_pids.json

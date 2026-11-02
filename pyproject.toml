@@ -19,6 +19,7 @@ python_functions = ["test_*"]
 addopts = "-v --import-mode=importlib"
 filterwarnings = [
     "ignore::DeprecationWarning",
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
 ]
 
 [tool.ruff]
