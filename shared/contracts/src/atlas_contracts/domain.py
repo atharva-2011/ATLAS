@@ -63,6 +63,16 @@ class ReportStatus(StrEnum):
     FINAL = "final"
 
 
+class DocumentStatus(StrEnum):
+    """Lifecycle status of an ingested source document."""
+
+    UPLOADED = "uploaded"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    SCANNED_OCR_REQUIRED = "scanned_ocr_required"
+
+
 # --- Research DTOs ---
 
 
@@ -231,3 +241,59 @@ class ReportRead(BaseModel):
     format: str
     status: ReportStatus
     created_at: datetime
+
+
+# --- Document Ingestion DTOs ---
+
+
+class DocumentMetadata(BaseModel):
+    """Metadata describing an ingested document."""
+
+    id: UUID
+    tenant_id: str = "default"
+    filename: str
+    mime_type: str
+    size_bytes: int
+    checksum_sha256: str
+    page_count: int = 1
+    status: DocumentStatus = DocumentStatus.UPLOADED
+    created_at: datetime
+    error_message: str | None = None
+
+
+class DocumentChunk(BaseModel):
+    """Normalized, locator-preserving text chunk derived from an ingested document."""
+
+    id: UUID | None = None
+    document_id: UUID
+    chunk_index: int
+    text: str = Field(min_length=1)
+    content_hash: str
+    locator: dict[str, Any] = Field(default_factory=dict)
+    character_count: int | None = None
+
+
+# Alias for pipeline compatibility
+DocumentChunkDTO = DocumentChunk
+
+
+class DocumentIngestionResult(BaseModel):
+    """Result summary of processing and chunking a document."""
+
+    document_id: UUID
+    filename: str
+    storage_key: str
+    content_hash: str
+    byte_size: int
+    page_count: int
+    chunk_count: int
+    status: DocumentStatus
+    error_message: str | None = None
+
+
+class DocumentUploadResponse(BaseModel):
+    """Response returned upon successful document upload and chunking."""
+
+    document: DocumentMetadata
+    chunks_count: int
+    chunks: list[DocumentChunk] = Field(default_factory=list)

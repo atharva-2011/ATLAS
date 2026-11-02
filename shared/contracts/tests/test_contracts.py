@@ -4,6 +4,10 @@ from datetime import datetime
 from uuid import uuid4
 
 from atlas_contracts import (
+    DocumentChunk,
+    DocumentMetadata,
+    DocumentStatus,
+    DocumentUploadResponse,
     ErrorResponse,
     EvidenceCreate,
     HealthResponse,
@@ -133,3 +137,41 @@ def test_task_and_evidence_dtos():
     )
     assert evidence_create.confidence == 0.95
     assert evidence_create.locator["page"] == 14
+
+
+def test_document_ingestion_dtos():
+    doc_id = uuid4()
+    meta = DocumentMetadata(
+        id=doc_id,
+        tenant_id="tenant-xyz",
+        filename="report.pdf",
+        mime_type="application/pdf",
+        size_bytes=1048576,
+        checksum_sha256="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        page_count=12,
+        status=DocumentStatus.COMPLETED,
+        created_at=get_utc_now(),
+    )
+    assert meta.id == doc_id
+    assert meta.page_count == 12
+    assert meta.status == DocumentStatus.COMPLETED
+
+    chunk_id = uuid4()
+    chunk = DocumentChunk(
+        id=chunk_id,
+        document_id=doc_id,
+        chunk_index=0,
+        text="The artificial intelligence clinical trial observed significant improvements.",
+        content_hash="sha256:11223344",
+        locator={"page": 3, "section": "Results"},
+    )
+    assert chunk.id == chunk_id
+    assert chunk.locator["page"] == 3
+
+    resp = DocumentUploadResponse(
+        document=meta,
+        chunks_count=1,
+        chunks=[chunk],
+    )
+    assert resp.chunks_count == 1
+    assert resp.chunks[0].chunk_index == 0

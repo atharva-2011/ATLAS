@@ -59,5 +59,6 @@ Desktop.ini
 # ATLAS local artifacts
 data/
 storage/
+.atlas_storage/
 tmp/
 .atlas_pids.json

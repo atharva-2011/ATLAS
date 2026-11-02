@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     log_format: str = "console"
     api_prefix: str = "/api/v1"
 
+    # Ingestion & Storage Settings
+    storage_dir: str = ".atlas_storage/documents"
+    max_upload_size_bytes: int = 25 * 1024 * 1024  # 25 MB
+    allowed_extensions: list[str] = [".pdf", ".docx", ".txt", ".md"]
+    chunk_size_chars: int = 800
+    chunk_overlap_chars: int = 150
+    min_scanned_chars_per_page: int = 20
+
 
 @lru_cache
 def get_settings() -> Settings:

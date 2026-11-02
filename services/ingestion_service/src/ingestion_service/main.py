@@ -49,6 +49,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Routes
     app.include_router(health_router)
+    from ingestion_service.api.documents import router as documents_router
+
+    app.include_router(documents_router)
 
     @app.get("/", tags=["Root"])
     async def root_identity() -> dict[str, str]:
