@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from agent_runtime.core.config import Settings
 from agent_runtime.llm.base import BaseLLMProvider, LLMError, LLMTimeoutError
+from agent_runtime.llm.gemini_provider import GeminiProvider
 from agent_runtime.llm.mock_provider import MockLLMProvider
 from agent_runtime.llm.openai_provider import OpenAICompatibleProvider
 
@@ -124,6 +125,14 @@ def create_llm_provider(
             model_name=model_name,
             default_timeout=settings.request_timeout_seconds,
             provider_identifier=name,
+        )
+
+    if name == "gemini":
+        api_key = settings.gemini_api_key or ""
+        return GeminiProvider(
+            api_key=api_key,
+            model_name=model_name if model_name != "atlas-mock-v1" else "gemini-2.5-flash",
+            default_timeout=settings.request_timeout_seconds,
         )
 
     # Default fallback to mock provider
