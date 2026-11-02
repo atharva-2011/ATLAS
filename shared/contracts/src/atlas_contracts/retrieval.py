@@ -55,3 +55,40 @@ class VectorSearchResponse(BaseModel):
     tenant_id: str
     results_count: int
     results: list[VectorSearchResultItem] = Field(default_factory=list)
+
+
+class HybridSearchRequest(BaseModel):
+    """Query payload for hybrid retrieval (dense vector + sparse BM25 + reciprocal rank fusion)."""
+
+    tenant_id: str = Field(default="default", min_length=1)
+    query: str = Field(..., min_length=1)
+    top_k: int = Field(default=5, ge=1, le=100)
+    document_id: UUID | None = None
+    dense_weight: float = Field(default=0.6, ge=0.0, le=1.0)
+    sparse_weight: float = Field(default=0.4, ge=0.0, le=1.0)
+    rrf_k: int = Field(default=60, ge=1, le=100)
+
+
+class HybridSearchItem(BaseModel):
+    """Single item retrieved and ranked via hybrid fusion."""
+
+    chunk_id: str
+    document_id: UUID
+    chunk_index: int
+    text: str
+    locator: dict[str, Any] = Field(default_factory=dict)
+    combined_score: float = Field(..., ge=0.0, le=1.0)
+    dense_score: float | None = None
+    sparse_score: float | None = None
+    dense_rank: int | None = None
+    sparse_rank: int | None = None
+    tenant_id: str
+
+
+class HybridSearchResponse(BaseModel):
+    """Response containing hybrid ranked search items."""
+
+    query: str
+    tenant_id: str
+    results_count: int
+    results: list[HybridSearchItem] = Field(default_factory=list)
