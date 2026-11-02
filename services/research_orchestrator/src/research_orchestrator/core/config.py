@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     log_format: str = "console"
     api_prefix: str = "/api/v1"
 
+    # Database Configuration
+    database_url: str = "sqlite+aiosqlite:///./atlas_orchestrator.db"
+    db_echo: bool = False
+    db_pool_size: int = 5
+    db_max_overflow: int = 10
+
 
 @lru_cache
 def get_settings() -> Settings:
