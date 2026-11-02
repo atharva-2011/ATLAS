@@ -3,8 +3,9 @@
 import asyncio
 from typing import Any
 
-from atlas_contracts.agent_schemas import AgentInput
+from atlas_contracts.agent_schemas import AgentInput, SynthesizerOutput
 
+from research_orchestrator.reporting.renderer import ReportRenderer
 from research_orchestrator.workflow.agent_client import AgentRuntimeClient
 from research_orchestrator.workflow.state import ResearchWorkflowState
 
@@ -183,7 +184,20 @@ class WorkflowNodeHandler:
                 "error": f"Synthesis failed: {res.error_message or 'Unknown error'}",
             }
 
+        synth_output = SynthesizerOutput.model_validate(res.output)
+        renderer = ReportRenderer()
+        full_markdown = renderer.render_markdown(
+            research_id=state.get("research_id", "run_0"),
+            query=state.get("query", ""),
+            synth_output=synth_output,
+            evidence_records=verified,
+            critic_gaps=state.get("critic_gaps", []),
+            contradictions=state.get("contradictions", []),
+        )
+        final_dict = synth_output.model_dump()
+        final_dict["full_markdown"] = full_markdown
+
         return {
             "status": "completed",
-            "final_report": res.output,
+            "final_report": final_dict,
         }
