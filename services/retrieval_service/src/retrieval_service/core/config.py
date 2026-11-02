@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     log_format: str = "console"
     api_prefix: str = "/api/v1"
 
+    # Vector Storage and Embeddings
+    qdrant_location: str = ":memory:"
+    qdrant_path: str | None = None
+    collection_name: str = "atlas_evidence_chunks"
+    embedding_provider: str = "deterministic"
+    embedding_model: str = "deterministic-local-384"
+    vector_dimension: int = 384
+
 
 @lru_cache
 def get_settings() -> Settings:

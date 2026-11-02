@@ -32,10 +32,19 @@ from atlas_contracts.models import (
     ServiceStatus,
     get_utc_now,
 )
+from atlas_contracts.retrieval import (
+    ChunkIndexRequest,
+    ChunkIndexResult,
+    VectorSearchRequest,
+    VectorSearchResponse,
+    VectorSearchResultItem,
+)
 
 __all__ = [
     "AgentExecutionCreate",
     "AgentExecutionRead",
+    "ChunkIndexRequest",
+    "ChunkIndexResult",
     "DocumentChunk",
     "DocumentChunkDTO",
     "DocumentIngestionResult",
@@ -60,6 +69,9 @@ __all__ = [
     "SourceRead",
     "SourceType",
     "TaskStatus",
+    "VectorSearchRequest",
+    "VectorSearchResponse",
+    "VectorSearchResultItem",
     "VerificationStatus",
     "get_utc_now",
 ]

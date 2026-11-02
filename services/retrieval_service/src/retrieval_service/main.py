@@ -7,6 +7,7 @@ from atlas_observability import CorrelationIdMiddleware, setup_logging
 from fastapi import FastAPI
 
 from retrieval_service.api.health import router as health_router
+from retrieval_service.api.indexing import router as indexing_router
 from retrieval_service.core.config import Settings, get_settings
 
 
@@ -49,6 +50,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # Routes
     app.include_router(health_router)
+    app.include_router(indexing_router)
 
     @app.get("/", tags=["Root"])
     async def root_identity() -> dict[str, str]:
