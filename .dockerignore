@@ -16,3 +16,4 @@ build
 *.db
 *.db-journal
 benchmark_scorecard.json
+

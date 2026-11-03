@@ -34,3 +34,4 @@ def test_metrics_gauge_and_histogram() -> None:
     assert "# TYPE atlas_task_duration_seconds histogram" in prom
     assert 'atlas_task_duration_seconds_count{service="research-orchestrator",task_type="deep_search"} 2' in prom
     assert 'atlas_task_duration_seconds_sum{service="research-orchestrator",task_type="deep_search"} 4.0000' in prom
+

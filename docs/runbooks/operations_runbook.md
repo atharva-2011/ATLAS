@@ -113,3 +113,4 @@ python infrastructure/scripts/backup_restore.py restore ./backups/atlas_backup_Y
 ### Scenario C: Model Provider Outages (OpenAI / Anthropic / Gemini)
 1. The `agent_runtime` has built-in resilient fallback chains (`resilient_service_fallback_on_primary_failure`).
 2. If the primary provider fails or returns a 5xx, the runtime automatically retries with the configured fallback provider and model.
+
