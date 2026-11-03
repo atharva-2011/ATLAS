@@ -1,0 +1,27 @@
+{
+  "description": "ATLAS End-to-End Multi-Agent Research Scenarios with Citation & Evidence Fixtures",
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "scenario_id": "scenario_solid_state_batteries",
+      "topic": "Silicon-Anode & Solid-State Battery Commercial Viability",
+      "tenant_id": "default",
+      "referenced_evidence": [
+        {
+          "chunk_id": "chunk_energy_01",
+          "evidence_id": "chunk_energy_01",
+          "text": "Silicon-anode lithium-ion batteries achieve higher gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation, resulting in mechanical degradation.",
+          "locator": {"source": "Nature Energy 2024", "page": 21}
+        },
+        {
+          "chunk_id": "chunk_energy_02",
+          "evidence_id": "chunk_energy_02",
+          "text": "Solid-state electrolyte interfaces using sulfide ceramic separators reduce dendrite penetration at current densities up to 10 mA/cm2 when operated under 5 MPa stack pressure.",
+          "locator": {"source": "Nature Energy 2024", "page": 27}
+        }
+      ],
+      "golden_report_markdown": "# Research Report: Next-Generation Battery Chemistries\n\n## Executive Summary\nSilicon-anode lithium-ion batteries achieve gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation [chunk_energy_01].\n\n## Solid-State Advances\nSolid-state electrolyte interfaces using sulfide ceramic separators reduce dendrite penetration at current densities up to 10 mA/cm2 under 5 MPa stack pressure [chunk_energy_02].\n\n## Strategic Synthesis\nIn our strategic analysis, mass production scaling hinges on mechanical pressure containment solutions.\n",
+      "corrupted_report_markdown": "# Corrupted Report: Next-Generation Battery Chemistries\n\n## Unsubstantiated Claims\nQuantum battery cells operate at room temperature with zero degradation indefinitely [chunk_unknown_999].\n\n## Contradictory Findings\nSilicon-anode batteries lower energy densities to decrease below 50 Wh/kg during lithiation [chunk_energy_01].\n"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "description": "ATLAS Gold Standard Benchmark for Dense, Sparse, and Hybrid Retrieval",
+  "version": "1.0.0",
+  "corpus": [
+    {
+      "chunk_id": "chunk_med_01",
+      "document_id": "doc_clinical_ai",
+      "text": "Deep learning models deployed for diagnostic imaging in diabetic retinopathy demonstrated an area under the ROC curve (AUC) of 0.984 across a multi-hospital cohort of 12,000 patients.",
+      "metadata": {"domain": "healthcare", "source": "Lancet Digital Health 2024", "page": 4}
+    },
+    {
+      "chunk_id": "chunk_med_02",
+      "document_id": "doc_clinical_ai",
+      "text": "Algorithmic bias was observed where diagnostic sensitivity declined by 14% on underrepresented demographic sub-populations with lower illumination retinal photography.",
+      "metadata": {"domain": "healthcare", "source": "Lancet Digital Health 2024", "page": 6}
+    },
+    {
+      "chunk_id": "chunk_fin_01",
+      "document_id": "doc_basel_iv",
+      "text": "The standardized approach for credit risk (SA-CR) under Basel IV introduces granular risk weights ranging between 20% and 150% depending on counterparty credit ratings and real estate loan-to-value ratios.",
+      "metadata": {"domain": "finance", "source": "Bank for International Settlements Report", "page": 12}
+    },
+    {
+      "chunk_id": "chunk_fin_02",
+      "document_id": "doc_basel_iv",
+      "text": "The output floor restricts internal ratings-based (IRB) model capital benefits to a maximum of 72.5% of the total risk-weighted assets calculated using standardized metrics.",
+      "metadata": {"domain": "finance", "source": "Bank for International Settlements Report", "page": 18}
+    },
+    {
+      "chunk_id": "chunk_sys_01",
+      "document_id": "doc_raft_consensus",
+      "text": "The Raft consensus algorithm decomposes state machine replication into leader election, log replication, and safety invariants, guaranteeing that if any server applied an entry, no other server applies a different entry for that index.",
+      "metadata": {"domain": "distributed_systems", "source": "USENIX ATC 2014", "page": 3}
+    },
+    {
+      "chunk_id": "chunk_sys_02",
+      "document_id": "doc_raft_consensus",
+      "text": "Linearizable read-only queries in Raft require the leader to verify its leadership with a majority quorum heartbeat before responding to prevent stale reads from partitioned leaders.",
+      "metadata": {"domain": "distributed_systems", "source": "USENIX ATC 2014", "page": 9}
+    },
+    {
+      "chunk_id": "chunk_energy_01",
+      "document_id": "doc_battery_tech",
+      "text": "Silicon-anode lithium-ion batteries achieve gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation, resulting in mechanical degradation.",
+      "metadata": {"domain": "clean_tech", "source": "Nature Energy 2024", "page": 21}
+    },
+    {
+      "chunk_id": "chunk_energy_02",
+      "document_id": "doc_battery_tech",
+      "text": "Solid-state electrolyte interfaces using sulfide ceramic separators reduce dendrite penetration at current densities up to 10 mA/cm2 when operated under 5 MPa stack pressure.",
+      "metadata": {"domain": "clean_tech", "source": "Nature Energy 2024", "page": 27}
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q_med_retinopathy",
+      "query": "What is the diagnostic accuracy and AUC for diabetic retinopathy deep learning models?",
+      "domain": "healthcare",
+      "relevant_chunk_ids": ["chunk_med_01"],
+      "graded_relevance": {"chunk_med_01": 3, "chunk_med_02": 1}
+    },
+    {
+      "query_id": "q_med_bias",
+      "query": "How does demographic bias affect clinical AI sensitivity in retinal imaging?",
+      "domain": "healthcare",
+      "relevant_chunk_ids": ["chunk_med_02"],
+      "graded_relevance": {"chunk_med_02": 3, "chunk_med_01": 0}
+    },
+    {
+      "query_id": "q_fin_output_floor",
+      "query": "What is the Basel IV capital output floor percentage limit for IRB banks?",
+      "domain": "finance",
+      "relevant_chunk_ids": ["chunk_fin_02"],
+      "graded_relevance": {"chunk_fin_02": 3, "chunk_fin_01": 1}
+    },
+    {
+      "query_id": "q_fin_sacr",
+      "query": "How are risk weights structured in the Basel IV standardized approach for credit risk?",
+      "domain": "finance",
+      "relevant_chunk_ids": ["chunk_fin_01"],
+      "graded_relevance": {"chunk_fin_01": 3, "chunk_fin_02": 1}
+    },
+    {
+      "query_id": "q_sys_linearizable_reads",
+      "query": "How do Raft clusters enforce linearizable read consistency without stale reads?",
+      "domain": "distributed_systems",
+      "relevant_chunk_ids": ["chunk_sys_02"],
+      "graded_relevance": {"chunk_sys_02": 3, "chunk_sys_01": 1}
+    },
+    {
+      "query_id": "q_energy_silicon_anode",
+      "query": "What energy density do silicon anode batteries achieve and what causes their degradation?",
+      "domain": "clean_tech",
+      "relevant_chunk_ids": ["chunk_energy_01"],
+      "graded_relevance": {"chunk_energy_01": 3, "chunk_energy_02": 0}
+    }
+  ]
+}

@@ -51,6 +51,8 @@ from atlas_contracts.evaluation import (
     ClaimVerificationRecord,
     ClaimVerificationRequest,
     NormalizedClaim,
+    RetrievalBenchmarkScorecard,
+    RetrievalQueryEvaluation,
 )
 from atlas_contracts.models import (
     ErrorResponse,
@@ -117,6 +119,8 @@ __all__ = [
     "ResearchTaskCreate",
     "ResearchTaskRead",
     "ResearcherOutput",
+    "RetrievalBenchmarkScorecard",
+    "RetrievalQueryEvaluation",
     "ServiceStatus",
     "SourceCreate",
     "SourceRead",

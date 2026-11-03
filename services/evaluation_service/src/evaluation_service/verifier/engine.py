@@ -19,12 +19,19 @@ class EvidenceVerificationEngine:
 
     CONTRADICTION_PAIRS = [
         ("increase", "decrease"),
+        ("increases", "decreases"),
+        ("increased", "decreased"),
         ("exceed", "below"),
+        ("above", "below"),
         ("higher", "lower"),
+        ("highest", "lowest"),
+        ("maximum", "minimum"),
         ("supported", "unsupported"),
         ("true", "false"),
         ("positive", "negative"),
         ("enabled", "disabled"),
+        ("growth", "decline"),
+        ("reduce", "increase"),
     ]
 
     def _check_contradiction(self, claim_text: str, passage_text: str) -> bool:

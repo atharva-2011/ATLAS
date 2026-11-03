@@ -72,3 +72,30 @@ class CitationVerificationResult(BaseModel):
     contradicted_claims_count: int
     unsupported_claims_count: int
     records: list[ClaimVerificationRecord] = Field(default_factory=list)
+
+
+class RetrievalQueryEvaluation(BaseModel):
+    """Detailed ranking evaluation metrics for an individual test query."""
+
+    query_id: str
+    query: str
+    retrieved_chunk_ids: list[str] = Field(default_factory=list)
+    relevant_chunk_ids: list[str] = Field(default_factory=list)
+    recall_at_k: dict[int, float] = Field(default_factory=dict)
+    reciprocal_rank: float = Field(default=0.0, ge=0.0, le=1.0)
+    ndcg_at_k: dict[int, float] = Field(default_factory=dict)
+    precision_at_k: dict[int, float] = Field(default_factory=dict)
+
+
+class RetrievalBenchmarkScorecard(BaseModel):
+    """Aggregated retrieval benchmark scorecard across a gold dataset."""
+
+    benchmark_name: str = "ATLAS Retrieval Benchmark"
+    total_queries: int
+    mean_recall_at_k: dict[int, float] = Field(default_factory=dict)
+    mrr: float = Field(default=0.0, ge=0.0, le=1.0)
+    mean_ndcg_at_k: dict[int, float] = Field(default_factory=dict)
+    mean_precision_at_k: dict[int, float] = Field(default_factory=dict)
+    per_query_results: list[RetrievalQueryEvaluation] = Field(default_factory=list)
+    relative_lift: dict[str, float] = Field(default_factory=dict)
+

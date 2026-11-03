@@ -1,0 +1,433 @@
+{
+  "timestamp": "2026-11-03T11:09:02.053521+00:00",
+  "overall_status": "PASS",
+  "gates": [
+    {
+      "category": "Retrieval",
+      "gate": "Recall@5",
+      "measured": 1.0,
+      "target": 0.7,
+      "status": "PASS"
+    },
+    {
+      "category": "Retrieval",
+      "gate": "MRR",
+      "measured": 1.0,
+      "target": 0.6,
+      "status": "PASS"
+    },
+    {
+      "category": "Retrieval",
+      "gate": "nDCG@5",
+      "measured": 0.9956,
+      "target": 0.6,
+      "status": "PASS"
+    },
+    {
+      "category": "Claim Verification",
+      "gate": "Accuracy",
+      "measured": 1.0,
+      "target": 0.8,
+      "status": "PASS"
+    },
+    {
+      "category": "Claim Verification",
+      "gate": "Macro F1",
+      "measured": 1.0,
+      "target": 0.75,
+      "status": "PASS"
+    },
+    {
+      "category": "Claim Verification",
+      "gate": "Hallucination Recall",
+      "measured": 1.0,
+      "target": 0.9,
+      "status": "PASS"
+    },
+    {
+      "category": "Claim Verification",
+      "gate": "Contradiction Recall",
+      "measured": 1.0,
+      "target": 0.9,
+      "status": "PASS"
+    },
+    {
+      "category": "Report Synthesis",
+      "gate": "Citation Precision",
+      "measured": 1.0,
+      "target": 0.95,
+      "status": "PASS"
+    },
+    {
+      "category": "Report Synthesis",
+      "gate": "Faithfulness Score",
+      "measured": 1.0,
+      "target": 0.85,
+      "status": "PASS"
+    },
+    {
+      "category": "Report Synthesis",
+      "gate": "Anomaly / Hallucination Detection",
+      "measured": 1.0,
+      "target": 1.0,
+      "status": "PASS"
+    }
+  ],
+  "retrieval_benchmark": {
+    "benchmark_name": "ATLAS Gold Retrieval Benchmark",
+    "total_queries": 6,
+    "mean_recall_at_k": {
+      "1": 1.0,
+      "3": 1.0,
+      "5": 1.0,
+      "10": 1.0
+    },
+    "mrr": 1.0,
+    "mean_ndcg_at_k": {
+      "1": 1.0,
+      "3": 0.9862,
+      "5": 0.9956,
+      "10": 0.9956
+    },
+    "mean_precision_at_k": {
+      "1": 1.0,
+      "3": 0.3333,
+      "5": 0.2,
+      "10": 0.1
+    },
+    "per_query_results": [
+      {
+        "query_id": "q_med_retinopathy",
+        "query": "What is the diagnostic accuracy and AUC for diabetic retinopathy deep learning models?",
+        "retrieved_chunk_ids": [
+          "chunk_med_01",
+          "chunk_fin_01",
+          "chunk_sys_01",
+          "chunk_med_02",
+          "chunk_fin_02",
+          "chunk_sys_02"
+        ],
+        "relevant_chunk_ids": [
+          "chunk_med_01"
+        ],
+        "recall_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "reciprocal_rank": 1.0,
+        "ndcg_at_k": {
+          "1": 1.0,
+          "3": 0.9173,
+          "5": 0.9738,
+          "10": 0.9738
+        },
+        "precision_at_k": {
+          "1": 1.0,
+          "3": 0.3333,
+          "5": 0.2,
+          "10": 0.1
+        }
+      },
+      {
+        "query_id": "q_med_bias",
+        "query": "How does demographic bias affect clinical AI sensitivity in retinal imaging?",
+        "retrieved_chunk_ids": [
+          "chunk_med_02",
+          "chunk_med_01",
+          "chunk_energy_01",
+          "chunk_sys_02"
+        ],
+        "relevant_chunk_ids": [
+          "chunk_med_02"
+        ],
+        "recall_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "reciprocal_rank": 1.0,
+        "ndcg_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "precision_at_k": {
+          "1": 1.0,
+          "3": 0.3333,
+          "5": 0.2,
+          "10": 0.1
+        }
+      },
+      {
+        "query_id": "q_fin_output_floor",
+        "query": "What is the Basel IV capital output floor percentage limit for IRB banks?",
+        "retrieved_chunk_ids": [
+          "chunk_fin_02",
+          "chunk_fin_01",
+          "chunk_med_01",
+          "chunk_sys_01",
+          "chunk_sys_02"
+        ],
+        "relevant_chunk_ids": [
+          "chunk_fin_02"
+        ],
+        "recall_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "reciprocal_rank": 1.0,
+        "ndcg_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "precision_at_k": {
+          "1": 1.0,
+          "3": 0.3333,
+          "5": 0.2,
+          "10": 0.1
+        }
+      },
+      {
+        "query_id": "q_fin_sacr",
+        "query": "How are risk weights structured in the Basel IV standardized approach for credit risk?",
+        "retrieved_chunk_ids": [
+          "chunk_fin_01",
+          "chunk_fin_02",
+          "chunk_med_01",
+          "chunk_sys_02",
+          "chunk_sys_01",
+          "chunk_energy_01"
+        ],
+        "relevant_chunk_ids": [
+          "chunk_fin_01"
+        ],
+        "recall_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "reciprocal_rank": 1.0,
+        "ndcg_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "precision_at_k": {
+          "1": 1.0,
+          "3": 0.3333,
+          "5": 0.2,
+          "10": 0.1
+        }
+      },
+      {
+        "query_id": "q_sys_linearizable_reads",
+        "query": "How do Raft clusters enforce linearizable read consistency without stale reads?",
+        "retrieved_chunk_ids": [
+          "chunk_sys_02",
+          "chunk_sys_01"
+        ],
+        "relevant_chunk_ids": [
+          "chunk_sys_02"
+        ],
+        "recall_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "reciprocal_rank": 1.0,
+        "ndcg_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "precision_at_k": {
+          "1": 1.0,
+          "3": 0.3333,
+          "5": 0.2,
+          "10": 0.1
+        }
+      },
+      {
+        "query_id": "q_energy_silicon_anode",
+        "query": "What energy density do silicon anode batteries achieve and what causes their degradation?",
+        "retrieved_chunk_ids": [
+          "chunk_energy_01",
+          "chunk_fin_01",
+          "chunk_sys_01"
+        ],
+        "relevant_chunk_ids": [
+          "chunk_energy_01"
+        ],
+        "recall_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "reciprocal_rank": 1.0,
+        "ndcg_at_k": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "10": 1.0
+        },
+        "precision_at_k": {
+          "1": 1.0,
+          "3": 0.3333,
+          "5": 0.2,
+          "10": 0.1
+        }
+      }
+    ],
+    "relative_lift": {}
+  },
+  "verification_benchmark": {
+    "summary": {
+      "total_cases": 5,
+      "correct_predictions": 5,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "hallucination_detection_recall": 1.0,
+      "contradiction_detection_recall": 1.0,
+      "per_status_metrics": {
+        "supported": {
+          "true_positives": 3.0,
+          "false_positives": 0.0,
+          "false_negatives": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "contradicted": {
+          "true_positives": 1.0,
+          "false_positives": 0.0,
+          "false_negatives": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "unsupported": {
+          "true_positives": 1.0,
+          "false_positives": 0.0,
+          "false_negatives": 0.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "confusion_matrix": {
+        "supported->supported": 3,
+        "contradicted->contradicted": 1,
+        "unsupported->unsupported": 1
+      }
+    },
+    "case_count": 5
+  },
+  "report_benchmark": {
+    "scenarios": [
+      {
+        "scenario_id": "scenario_solid_state_batteries",
+        "golden": {
+          "total_citations": 2,
+          "resolved_citations": 2,
+          "unresolved_citations": [],
+          "faithfulness_score": 1.0,
+          "citation_precision": 1.0,
+          "claims_evaluated": 3,
+          "supported_claims_count": 3,
+          "contradicted_claims_count": 0,
+          "unsupported_claims_count": 0,
+          "records": [
+            {
+              "claim_id": "claim_2e7830",
+              "claim_text": "Silicon-anode lithium-ion batteries achieve gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation .",
+              "status": "supported",
+              "supporting_evidence_ids": [
+                "chunk_energy_01"
+              ],
+              "contradiction_text": null,
+              "confidence": 1.0,
+              "provenance_locator": {
+                "source": "Nature Energy 2024",
+                "page": 21
+              },
+              "rationale": "Substantial keyword and semantic overlap with source passage."
+            },
+            {
+              "claim_id": "claim_c75ac3",
+              "claim_text": "Solid-state electrolyte interfaces using sulfide ceramic separators reduce dendrite penetration at current densities up to 10 mA/cm2 under 5 MPa stack pressure .",
+              "status": "supported",
+              "supporting_evidence_ids": [
+                "chunk_energy_02"
+              ],
+              "contradiction_text": null,
+              "confidence": 1.0,
+              "provenance_locator": {
+                "source": "Nature Energy 2024",
+                "page": 27
+              },
+              "rationale": "Substantial keyword and semantic overlap with source passage."
+            },
+            {
+              "claim_id": "claim_e676a7",
+              "claim_text": "In our strategic analysis, mass production scaling hinges on mechanical pressure containment solutions.",
+              "status": "supported",
+              "supporting_evidence_ids": [],
+              "contradiction_text": null,
+              "confidence": 1.0,
+              "provenance_locator": {},
+              "rationale": "Labeled as analysis or subjective evaluation."
+            }
+          ]
+        },
+        "corrupted": {
+          "total_citations": 2,
+          "resolved_citations": 1,
+          "unresolved_citations": [
+            "chunk_unknown_999"
+          ],
+          "faithfulness_score": 0.0,
+          "citation_precision": 0.5,
+          "claims_evaluated": 2,
+          "supported_claims_count": 0,
+          "contradicted_claims_count": 1,
+          "unsupported_claims_count": 1,
+          "records": [
+            {
+              "claim_id": "claim_a818fb",
+              "claim_text": "Quantum battery cells operate at room temperature with zero degradation indefinitely .",
+              "status": "unsupported",
+              "supporting_evidence_ids": [],
+              "contradiction_text": null,
+              "confidence": 0.909,
+              "provenance_locator": {},
+              "rationale": "No supporting evidence passage identified in provided context."
+            },
+            {
+              "claim_id": "claim_7dbc88",
+              "claim_text": "Silicon-anode batteries lower energy densities to decrease below 50 Wh/kg during lithiation .",
+              "status": "contradicted",
+              "supporting_evidence_ids": [],
+              "contradiction_text": "Silicon-anode lithium-ion batteries achieve higher gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation, resulting in mechanical degradation.",
+              "confidence": 0.95,
+              "provenance_locator": {},
+              "rationale": "Passage contradicts factual assertion in claim."
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "description": "ATLAS Gold Standard Benchmark for Claim Grounding, Contradiction Detection, and NLI Verification",
+  "version": "1.0.0",
+  "test_cases": [
+    {
+      "case_id": "case_supported_retinopathy",
+      "category": "factual_exact",
+      "claim": {
+        "claim_id": "claim_001",
+        "text": "Deep learning models for diabetic retinopathy imaging achieved an AUC of 0.984 across 12,000 patients.",
+        "is_opinion_or_analysis": false,
+        "cited_evidence_ids": ["chunk_med_01"]
+      },
+      "passages": [
+        {
+          "chunk_id": "chunk_med_01",
+          "text": "Deep learning models deployed for diagnostic imaging in diabetic retinopathy demonstrated an area under the ROC curve (AUC) of 0.984 across a multi-hospital cohort of 12,000 patients.",
+          "locator": {"page": 4}
+        }
+      ],
+      "expected_status": "supported",
+      "minimum_confidence": 0.70
+    },
+    {
+      "case_id": "case_contradicted_floor",
+      "category": "direct_contradiction",
+      "claim": {
+        "claim_id": "claim_002",
+        "text": "The output floor requires internal ratings-based model capital benefits to reach a minimum of 72.5% of total risk-weighted assets.",
+        "is_opinion_or_analysis": false,
+        "cited_evidence_ids": ["chunk_fin_02"]
+      },
+      "passages": [
+        {
+          "chunk_id": "chunk_fin_02",
+          "text": "The output floor restricts internal ratings-based (IRB) model capital benefits to a maximum of 72.5% of the total risk-weighted assets calculated using standardized metrics.",
+          "locator": {"page": 18}
+        }
+      ],
+      "expected_status": "contradicted",
+      "minimum_confidence": 0.90
+    },
+    {
+      "case_id": "case_unsupported_hallucination",
+      "category": "unsupported_hallucination",
+      "claim": {
+        "claim_id": "claim_003",
+        "text": "Quantum computing algorithms factorized RSA-4096 keys in under 12 milliseconds using photonic qubits.",
+        "is_opinion_or_analysis": false,
+        "cited_evidence_ids": ["chunk_sys_01"]
+      },
+      "passages": [
+        {
+          "chunk_id": "chunk_sys_01",
+          "text": "The Raft consensus algorithm decomposes state machine replication into leader election, log replication, and safety invariants.",
+          "locator": {"page": 3}
+        }
+      ],
+      "expected_status": "unsupported",
+      "minimum_confidence": 0.50
+    },
+    {
+      "case_id": "case_opinion_analysis",
+      "category": "analysis_opinion",
+      "claim": {
+        "claim_id": "claim_004",
+        "text": "In our strategic opinion, solid-state battery adoption will face commercialization bottlenecks throughout the mid-2020s.",
+        "is_opinion_or_analysis": true,
+        "cited_evidence_ids": []
+      },
+      "passages": [
+        {
+          "chunk_id": "chunk_energy_01",
+          "text": "Silicon-anode lithium-ion batteries achieve gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation, resulting in mechanical degradation.",
+          "locator": {"page": 21}
+        }
+      ],
+      "expected_status": "supported",
+      "minimum_confidence": 1.0
+    },
+    {
+      "case_id": "case_partially_supported",
+      "category": "partial_support",
+      "claim": {
+        "claim_id": "claim_005",
+        "text": "Silicon-anode batteries reach gravimetric energy densities of 400 Wh/kg.",
+        "is_opinion_or_analysis": false,
+        "cited_evidence_ids": []
+      },
+      "passages": [
+        {
+          "chunk_id": "chunk_energy_01",
+          "text": "Silicon-anode lithium-ion batteries achieve gravimetric energy densities reaching 400 Wh/kg, but suffer from 300% volumetric expansion during lithiation, resulting in mechanical degradation.",
+          "locator": {"page": 21}
+        }
+      ],
+      "expected_status": "supported",
+      "minimum_confidence": 0.65
+    }
+  ]
+}

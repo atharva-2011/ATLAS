@@ -18,6 +18,10 @@ class ClaimNormalizer:
     OPINION_MARKERS = (
         "we believe",
         "in our opinion",
+        "in our analysis",
+        "strategic analysis",
+        "in our view",
+        "we conclude",
         "might",
         "could perhaps",
         "it is possible",
@@ -43,15 +47,26 @@ class ClaimNormalizer:
 
     def extract_claims(self, text: str) -> list[NormalizedClaim]:
         """Split text into sentences and yield normalized claim objects."""
-        # Simple sentence splitter preserving abbreviations
-        sentences = re.split(r"(?<=[.!?])\s+", text)
+        lines = text.splitlines()
         claims: list[NormalizedClaim] = []
 
-        for s in sentences:
-            trimmed = s.strip()
-            # Ignore headers, list markers, or very short fragments
-            if len(trimmed) < 10 or trimmed.startswith("#") or trimmed.startswith("---"):
+        for line in lines:
+            line_str = line.strip()
+            # Ignore headers, divider lines, or empty lines
+            if (
+                not line_str
+                or line_str.startswith("#")
+                or line_str.startswith("---")
+                or line_str.startswith("===")
+            ):
                 continue
-            claims.append(self.normalize_sentence(trimmed))
+
+            # Split line into sentences preserving abbreviations
+            sentences = re.split(r"(?<=[.!?])\s+", line_str)
+            for s in sentences:
+                trimmed = s.strip()
+                if len(trimmed) < 10 or trimmed.startswith("#"):
+                    continue
+                claims.append(self.normalize_sentence(trimmed))
 
         return claims
