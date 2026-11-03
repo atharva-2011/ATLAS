@@ -4,9 +4,10 @@ import asyncio
 import logging
 from uuid import UUID
 
-from atlas_contracts.domain import ResearchStatus
+from atlas_contracts.domain import ReportCreate, ReportStatus, ResearchStatus
 
 from research_orchestrator.db.session import scoped_db_session
+from research_orchestrator.repositories.report_repo import SQLAlchemyReportRepository
 from research_orchestrator.repositories.research_repo import SQLAlchemyResearchRepository
 from research_orchestrator.workflow.runner import ResearchWorkflowRunner
 
@@ -96,6 +97,24 @@ class ResearchJobWorkerManager:
                     if final_state.get("error")
                     else None,
                 )
+
+                final_report = final_state.get("final_report")
+                if final_report and isinstance(final_report, dict):
+                    report_repo = SQLAlchemyReportRepository(session)
+                    await report_repo.create(
+                        ReportCreate(
+                            research_id=research_id,
+                            version=1,
+                            title=final_report.get("title") or f"Research Report on {query[:60]}",
+                            summary=final_report.get("summary") or "Synthesized research findings.",
+                            markdown_content=final_report.get("full_markdown")
+                            or final_report.get("markdown_content")
+                            or f"# Research Report\n\nQuery: {query}",
+                            structured_json=final_report,
+                            format="markdown",
+                            status=ReportStatus.FINAL,
+                        )
+                    )
 
             self._task_progress[research_id] = {
                 "status": status_val.value,

@@ -217,7 +217,7 @@ async def get_research_job_report(
         )
 
     report_repo = SQLAlchemyReportRepository(session)
-    report = await report_repo.get_latest_by_research(job_id)
+    report = await report_repo.get_latest_by_research_id(job_id)
     if report is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

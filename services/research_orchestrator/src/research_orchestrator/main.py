@@ -28,6 +28,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         settings.environment,
         settings.port,
     )
+
+    if "sqlite" in settings.database_url:
+        from research_orchestrator.db.base import Base
+        from research_orchestrator.db.session import get_engine
+
+        engine = get_engine()
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("SQLite database schema initialized.")
+
     yield
     logger.info("Service '%s' shutting down gracefully", settings.service_name)
 

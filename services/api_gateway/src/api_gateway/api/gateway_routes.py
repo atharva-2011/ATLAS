@@ -13,6 +13,13 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, s
 router = APIRouter(prefix="/api/v1", tags=["Gateway Proxy"])
 
 
+def _parse_error_detail(resp: httpx.Response) -> Any:
+    try:
+        return resp.json()
+    except Exception:
+        return resp.text or resp.reason_phrase
+
+
 @router.post(
     "/research/jobs",
     status_code=status.HTTP_202_ACCEPTED,
@@ -64,7 +71,7 @@ async def gateway_get_research_job_status(
         async with httpx.AsyncClient(timeout=10.0) as client:
             resp = await client.get(url, headers=headers)
             if resp.status_code != status.HTTP_200_OK:
-                raise HTTPException(status_code=resp.status_code, detail=resp.json())
+                raise HTTPException(status_code=resp.status_code, detail=_parse_error_detail(resp))
             return resp.json()
     except httpx.RequestError as exc:
         raise HTTPException(
@@ -94,7 +101,7 @@ async def gateway_cancel_research_job(
         async with httpx.AsyncClient(timeout=10.0) as client:
             resp = await client.post(url, headers=headers)
             if resp.status_code != status.HTTP_200_OK:
-                raise HTTPException(status_code=resp.status_code, detail=resp.json())
+                raise HTTPException(status_code=resp.status_code, detail=_parse_error_detail(resp))
             return resp.json()
     except httpx.RequestError as exc:
         raise HTTPException(
@@ -124,7 +131,7 @@ async def gateway_get_research_report(
         async with httpx.AsyncClient(timeout=10.0) as client:
             resp = await client.get(url, headers=headers)
             if resp.status_code != status.HTTP_200_OK:
-                raise HTTPException(status_code=resp.status_code, detail=resp.json())
+                raise HTTPException(status_code=resp.status_code, detail=_parse_error_detail(resp))
             return resp.json()
     except httpx.RequestError as exc:
         raise HTTPException(
