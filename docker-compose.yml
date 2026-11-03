@@ -1,0 +1,238 @@
+services:
+  # ============================================================================
+  # Infrastructure Data Stores
+  # ============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: atlas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-atlas}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-atlas_secure_password_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-atlas_research}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-atlas} -d ${POSTGRES_DB:-atlas_research}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - atlas-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: atlas-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - atlas-net
+
+  qdrant:
+    image: qdrant/qdrant:v1.9.0
+    container_name: atlas-qdrant
+    restart: unless-stopped
+    ports:
+      - "${QDRANT_PORT:-6333}:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'cat < /dev/null > /dev/tcp/localhost/6333'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - atlas-net
+
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    container_name: atlas-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-atlas_minio_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-atlas_minio_secret_dev}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'cat < /dev/null > /dev/tcp/localhost/9000'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - atlas-net
+
+  # ============================================================================
+  # ATLAS Microservices
+  # ============================================================================
+  research-orchestrator:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.service
+      args:
+        SERVICE_NAME: research_orchestrator
+        SERVICE_PORT: 8001
+    container_name: atlas-orchestrator
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: research-orchestrator
+      PORT: 8001
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-atlas}:${POSTGRES_PASSWORD:-atlas_secure_password_dev}@postgres:5432/${POSTGRES_DB:-atlas_research}
+      REDIS_URL: redis://redis:6379/0
+      LOG_FORMAT: json
+      LOG_LEVEL: INFO
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - atlas-net
+
+  ingestion-service:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.service
+      args:
+        SERVICE_NAME: ingestion_service
+        SERVICE_PORT: 8002
+    container_name: atlas-ingestion
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: ingestion-service
+      PORT: 8002
+      STORAGE_DIR: /app/storage/documents
+      LOG_FORMAT: json
+      LOG_LEVEL: INFO
+    ports:
+      - "8002:8002"
+    volumes:
+      - document_storage:/app/storage/documents
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - atlas-net
+
+  retrieval-service:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.service
+      args:
+        SERVICE_NAME: retrieval_service
+        SERVICE_PORT: 8003
+    container_name: atlas-retrieval
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: retrieval-service
+      PORT: 8003
+      QDRANT_LOCATION: http://qdrant:6333
+      EMBEDDING_PROVIDER: deterministic
+      LOG_FORMAT: json
+      LOG_LEVEL: INFO
+    ports:
+      - "8003:8003"
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    networks:
+      - atlas-net
+
+  agent-runtime:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.service
+      args:
+        SERVICE_NAME: agent_runtime
+        SERVICE_PORT: 8004
+    container_name: atlas-agent-runtime
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: agent-runtime
+      PORT: 8004
+      DEFAULT_PROVIDER: ${LLM_PROVIDER:-mock}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      LOG_FORMAT: json
+      LOG_LEVEL: INFO
+    ports:
+      - "8004:8004"
+    networks:
+      - atlas-net
+
+  evaluation-service:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.service
+      args:
+        SERVICE_NAME: evaluation_service
+        SERVICE_PORT: 8005
+    container_name: atlas-evaluation
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: evaluation-service
+      PORT: 8005
+      LOG_FORMAT: json
+      LOG_LEVEL: INFO
+    ports:
+      - "8005:8005"
+    networks:
+      - atlas-net
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/Dockerfile.service
+      args:
+        SERVICE_NAME: api_gateway
+        SERVICE_PORT: 8000
+    container_name: atlas-gateway
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: api-gateway
+      PORT: 8000
+      RESEARCH_ORCHESTRATOR_URL: http://research-orchestrator:8001
+      INGESTION_SERVICE_URL: http://ingestion-service:8002
+      RETRIEVAL_SERVICE_URL: http://retrieval-service:8003
+      AGENT_RUNTIME_URL: http://agent-runtime:8004
+      EVALUATION_SERVICE_URL: http://evaluation-service:8005
+      LOG_FORMAT: json
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      - research-orchestrator
+      - ingestion-service
+      - retrieval-service
+      - agent-runtime
+      - evaluation-service
+    networks:
+      - atlas-net
+
+networks:
+  atlas-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  minio_data:
+  document_storage:

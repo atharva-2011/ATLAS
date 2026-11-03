@@ -1,0 +1,68 @@
+# Multi-stage production Dockerfile for ATLAS microservices
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+# Install build essentials
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install python package tooling
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Copy pyproject.toml and shared modules
+COPY pyproject.toml ./
+COPY shared ./shared
+
+# Argument for target service
+ARG SERVICE_NAME
+COPY services/${SERVICE_NAME} ./services/${SERVICE_NAME}
+
+# Install shared packages and target service in a virtualenv
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN pip install --no-cache-dir fastapi "uvicorn[standard]" pydantic-settings httpx
+RUN pip install --no-cache-dir --no-build-isolation \
+    ./shared/contracts \
+    ./shared/observability \
+    ./shared/common \
+    ./shared/security \
+    ./services/${SERVICE_NAME}
+
+# Runtime Stage
+FROM python:3.12-slim AS runner
+
+ARG SERVICE_NAME
+ARG SERVICE_PORT=8000
+ARG SERVICE_MODULE=${SERVICE_NAME}
+
+ENV SERVICE_NAME=${SERVICE_NAME} \
+    SERVICE_PORT=${SERVICE_PORT} \
+    SERVICE_MODULE=${SERVICE_MODULE} \
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /app
+
+# Create non-root atlas user
+RUN groupadd -g 10001 atlas && \
+    useradd -u 10001 -g atlas -s /bin/bash -m atlas && \
+    mkdir -p /app/storage /app/logs && \
+    chown -R atlas:atlas /app
+
+# Copy virtual environment from builder
+COPY --from=builder --chown=atlas:atlas /opt/venv /opt/venv
+
+# Switch to non-root user
+USER atlas
+
+EXPOSE ${SERVICE_PORT}
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -c "import urllib.request, os; p = os.getenv('SERVICE_PORT', '8000'); urllib.request.urlopen(f'http://127.0.0.1:{p}/api/v1/health/liveness').getcode() == 200" || exit 1
+
+ENTRYPOINT ["sh", "-c", "exec uvicorn ${SERVICE_MODULE}.main:app --host 0.0.0.0 --port ${SERVICE_PORT} --workers 2 --access-log"]

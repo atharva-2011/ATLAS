@@ -1,0 +1,85 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "title": "API Gateway Request Throughput (req/sec)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(atlas_http_requests_total[1m])) by (service, endpoint)",
+          "legendFormat": "{{service}} - {{endpoint}}"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "title": "Service Request Latency (P95 ms)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(atlas_task_duration_seconds_bucket[1m])) by (le, service)) * 1000",
+          "legendFormat": "P95 {{service}}"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+      "id": 3,
+      "title": "Active Research Jobs (Live Gauge)",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(atlas_active_jobs)",
+          "legendFormat": "Active Jobs"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8},
+      "id": 4,
+      "title": "LLM Token Consumption Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(atlas_llm_tokens_total[5m])) by (provider, model)",
+          "legendFormat": "{{provider}} - {{model}}"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+      "id": 5,
+      "title": "Claim Faithfulness Release Pass Rate",
+      "type": "gauge",
+      "targets": [
+        {
+          "expr": "avg(atlas_faithfulness_score)",
+          "legendFormat": "Faithfulness Score"
+        }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["atlas", "rag", "agents", "production"],
+  "time": {"from": "now-1h", "to": "now"},
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "ATLAS Multi-Agent System Overview",
+  "version": 1
+}

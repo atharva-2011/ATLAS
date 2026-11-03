@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "atlas-api-gateway"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["api-gateway:8000"]
+
+  - job_name: "atlas-research-orchestrator"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["research-orchestrator:8001"]
+
+  - job_name: "atlas-ingestion-service"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["ingestion-service:8002"]
+
+  - job_name: "atlas-retrieval-service"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["retrieval-service:8003"]
+
+  - job_name: "atlas-agent-runtime"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["agent-runtime:8004"]
+
+  - job_name: "atlas-evaluation-service"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["evaluation-service:8005"]

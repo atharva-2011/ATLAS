@@ -1,4 +1,4 @@
-"""ATLAS Common: Shared system primitives and constants."""
+"""ATLAS Common Package."""
 
 from atlas_common.constants import (
     APP_NAME,
@@ -9,6 +9,10 @@ from atlas_common.constants import (
     ENV_TEST,
     SUPPORTED_ENVIRONMENTS,
 )
+from atlas_common.env_validator import (
+    EnvironmentValidationError,
+    EnvironmentValidator,
+)
 
 __all__ = [
     "APP_NAME",
@@ -17,5 +21,7 @@ __all__ = [
     "ENV_PRODUCTION",
     "ENV_STAGING",
     "ENV_TEST",
+    "EnvironmentValidationError",
+    "EnvironmentValidator",
     "SUPPORTED_ENVIRONMENTS",
 ]

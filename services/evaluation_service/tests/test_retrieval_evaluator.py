@@ -120,3 +120,4 @@ def test_evaluate_dataset_and_lift(evaluator: RetrievalEvaluator) -> None:
     assert "mrr_delta" in lift
     assert lift["mrr_delta"] > 0
     assert lift["mrr_relative_pct"] > 0
+

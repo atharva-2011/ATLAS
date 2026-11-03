@@ -65,3 +65,4 @@ def test_research_scenarios_structure() -> None:
         assert "golden_report_markdown" in sc
         assert "corrupted_report_markdown" in sc
         assert "referenced_evidence" in sc
+
